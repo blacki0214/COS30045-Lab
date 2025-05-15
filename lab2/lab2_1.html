@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+	<meta name="description"	content="Data Visualisation"/>
+	<meta name="keywords"		  content="HTML, CSS"/>
+	<meta name="author"			  content="NguyenVanQuoc_104198640"/>
+
+	<title>Task 2.1 D3 Drawing with Data - Binding</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .warning {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Creating and Formatting Paragraph Elements with D3</h1>
+
+    <script>
+        var dataset = [5, 10, 15, 20, 25];
+            d3.select("body").selectAll("p")
+                .data(dataset)
+                .enter()
+                .append("p")
+                .attr("class", function(d) {
+                    if (d > 10) {
+                        return "warning";
+                    }
+                })
+                .text(function(d) {
+                    if (d > 10){
+                        return "Warning: Joe watched " + d + " cats videos today.";
+                    } else {
+                        return "Joe watched  " + d + " cats videos today";
+                    }
+                });
+    </script>
+
+    <footer style="color: grey">COS30045 Data Visualisation<br>
+            QuocBloggs</footer>
+    
+</body>
+</html>
