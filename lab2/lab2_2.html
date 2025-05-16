@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+	<meta name="description"	content="Data Visualisation"/>
+	<meta name="keywords"		  content="HTML, CSS"/>
+	<meta name="author"			  content="NguyenVanQuoc_104198640"/>
+
+	<title>Task 2.2</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <h1>Creating and Formatting Paragraph Elements with D3</h1>
+
+    <script>
+        var w = 500;
+        var h = 100;
+        var padding = 1;
+
+        var dataset = [5, 10, 15, 20, 25];
+
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+        var bar_width = (w / dataset.length) - padding;
+
+        svg.selectAll("rect")
+            .data(dataset)
+            .enter()
+            .append("rect")
+            .attr("x", function(d, i) {
+                return i * (w / dataset.length);
+            })
+            .attr("y", function(d) {
+                return h - (d * 4);
+            })
+            .attr("width", bar_width)
+            .attr("height", function(d) {
+                return d * 4;
+            })
+            .attr("fill", "steelblue")  // Add color to bars
+            .attr("stroke", "dark")  // Add border
+            .attr("stroke-width", 1);
+    </script>
+
+    <footer style="color: grey">COS30045 Data Visualisation<br>
+            </footer>
+    
+</body>
+</html>
