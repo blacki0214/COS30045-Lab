@@ -35,7 +35,7 @@ function init() {
                     return Number(d.wombats) * 4;
                 })
                 .attr("fill", function(d) {
-                    return d.wombats > 10 ? "blue" : "darkblue";  // Highlight points with y > 80
+                    return d.wombats > 10 ? "blue" : "darkblue";  // Highlight points with y > 10
                 })
                 
         }

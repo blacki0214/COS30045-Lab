@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+	<meta name="description"	content="Data Visualisation"/>
+	<meta name="keywords"		  content="HTML, CSS"/>
+	<meta name="author"			  content="NguyenVanQuoc_104198640"/>
+
+	<title>Task 2.3</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <h1>Drawing with Data - Scatter Plot</h1>
+
+    <script>
+        var w = 600;
+        var h = 300;
+        padding = 40;
+        
+
+        var dataset = [[5, 20], [480, 90], [250, 50], [100, 33], [330, 95], [410, 12], [475, 44], 
+        [25, 67], [85, 21], [220, 88], 
+        [500, 150], [550, 5], [0,0]];
+
+        var xScale = d3.scaleLinear()
+            .domain([
+                d3.min(dataset, d => d[0]),
+                d3.max(dataset, d => d[0])
+            ])
+            .range([padding, w - padding]);
+        
+        var yScale = d3.scaleLinear()
+            .domain([
+                d3.min(dataset, d => d[1]),
+                d3.max(dataset, d => d[1])
+            ])
+            .range([h - padding, padding]);
+
+
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+        svg.selectAll("circle")
+            .data(dataset)
+            .enter()
+            .append("circle")
+            .attr("cx", d => xScale(d[0]))
+            .attr("cy", d => yScale(d[1]))
+            .attr("r", 5)
+            .attr("fill", function(d) {
+                return d[1] > 80 ? "red" : "slategrey";  // Highlight points with y > 80
+            })
+
+            .attr("stroke", "dark")  // Add border
+            .attr("stroke-width", 1);
+
+        svg.selectAll("text")
+            .data(dataset)
+            .enter()
+            .append("text")
+            .attr("x", function(d, i) {
+                return xScale(d[0]);
+            })
+            .attr("y", function(d) {
+                return yScale(d[1]);
+            })
+            .text(function(d) {
+                return d[0] + "," + d[1];
+            })
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "11px")
+            .attr("fill", "black")
+    </script>
+
+    <footer style="color: grey">COS30045 Data Visualisation<br>
+        Quoc Blogs
+            </footer>
+    
+</body>
+</html>
