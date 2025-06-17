@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="description" content="Data Visualisation"/>
+    <meta name="keywords" content="HTML, CSS"/>
+    <meta name="author" content="NguyenVanQuoc_104198640"/>
+    <title>Task 6.2</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .update-btn {
+            background-color: #5a90bb;
+            color: white;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 3px;
+            padding: 5px 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .update-btn:hover {
+            background-color: #41709c;
+        }
+    </style>
+</head>
+<body>
+    <h1>D3 Interactivity - Sort</h1>
+    <button class="update-btn" id="addBtn">Add</button>
+    <button class="update-btn" id="removeBtn" style="background:#f4a261;">Remove</button>
+    <button class="update-btn" id="sortBtn" style="background:#2a9d8f;">Sort</button>
+
+    <script>
+        var w = 500;
+        var h = 200;
+        var padding = 1;
+        var maxValue = 25;
+
+        var dataset = [5, 10, 15, 20, 25];
+
+        var xScale = d3.scaleBand()
+            .domain(d3.range(dataset.length))  
+            .rangeRound([40, w])
+            .paddingInner(0.05);  
+
+        var yScale = d3.scaleLinear()
+            .domain([0, d3.max(dataset)])  
+            .range([h, 0]);
+
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h + 40); // Extra space for x-axis label
+
+        var yAxis = svg.append("g")
+            .attr("transform", "translate(40, 0)")
+            .call(d3.axisLeft(yScale));
+
+        var xAxis = svg.append("g")
+            .attr("transform", "translate(0," + h + ")")
+            .call(d3.axisBottom(xScale).tickFormat(function(d) { return d + 1; }));
+
+        // Y Axis Label
+        svg.append("text")
+            .attr("class", "y label")
+            .attr("text-anchor", "middle")
+            .attr("x", 10)
+            .attr("y", h / 2)
+            .attr("dy", "-1.5em")
+            .attr("transform", "rotate(-90, 15," + (h / 2) + ")")
+            .text("Value");
+
+        // X Axis Label
+        svg.append("text")
+            .attr("class", "x label")
+            .attr("text-anchor", "middle")
+            .attr("x", w / 2)
+            .attr("y", h + 35)
+            .text("Index");
+
+        
+
+        function updateChart() {
+            // Update scales
+            xScale.domain(d3.range(dataset.length));
+            yScale.domain([0, d3.max(dataset)]);
+
+            // DATA JOIN for bars
+            var bars = svg.selectAll("rect")
+                .data(dataset, function(d, i) { return i; })
+                
+
+            // EXIT old elements
+            bars.exit()
+                .transition()
+                .duration(500)
+                .attr("x", w) // Slide out to right
+                .remove();
+
+            // ENTER new bars
+            var barsEnter = bars.enter()
+                .append("rect")
+                .attr("x", w) // Start off-screen to the right
+                .attr("y", function(d) { return yScale(d); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return h - yScale(d); })
+                .attr("fill", "steelblue")
+                .attr("stroke", "dark")
+                .attr("stroke-width", 1);
+                
+            // MERGE and transition all bars
+            barsEnter.merge(bars)
+                .on("mouseover", function(event, d) {
+                    d3.select(this)
+                        .transition()
+                        .duration(300)
+                        .attr("fill", "orange");
+
+                    var xPosition = parseFloat(d3.select(this).attr("x")) + xScale.bandwidth() / 2;
+                    var yPosition = parseFloat(d3.select(this).attr("y")) - 5;
+
+                    svg.append("text")
+                        .attr("id", "tooltip")
+                        .attr("x", xPosition)
+                        .attr("y", yPosition)
+                        .attr("text-anchor", "middle")
+                        .attr("font-size", "18px")
+                        .attr("font-weight", "bold")
+                        .attr("fill", "#222")
+                        .text(d);
+                        })
+                .on("mouseout", function(event, d) {
+
+                    d3.select("#tooltip").remove();
+
+                    d3.select(this)
+                        .transition()
+                        .duration(300)
+                        .attr("fill", "steelblue");
+                })
+                .transition()
+                .duration(500)
+                .attr("x", function(d, i) { return xScale(i); })
+                .attr("y", function(d) { return yScale(d); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return h - yScale(d); })
+                .attr("fill", "steelblue");
+            
+            
+                
+
+            // Update axes
+            yAxis.transition().duration(500).call(d3.axisLeft(yScale));
+            xAxis.transition().duration(500).call(d3.axisBottom(xScale).tickFormat(function(d) { return d + 1; }));
+        }
+
+        function sortBars() {
+            dataset.sort(d3.ascending);
+            updateChart();
+
+            xScale.domain(d3.range(dataset.length));
+            yScale.domain([0, d3.max(dataset)]);
+
+            svg.selectAll("react")
+                .data(dataset, function(d, i) { return i;})
+                .transition()
+                .duration(500)
+                .attr("x", function(d, i) { return xScale(i); })
+
+            xAxis.transition().duration(500).call(d3.axisBottom(xScale).tickFormat(function(d) { return d + 1; }));
+        }
+
+
+        // Add button handler
+        document.getElementById("addBtn").onclick = function() {
+            dataset.push(Math.floor(Math.random() * maxValue));
+            updateChart();
+        };
+
+        // Remove button handler
+        document.getElementById("removeBtn").onclick = function() {
+            if (dataset.length > 0) {
+                dataset.shift();
+                updateChart();
+            }
+        };
+
+        document.getElementById("sortBtn").onclick = function() {
+            sortBars();
+        };
+
+        // Initial render
+        updateChart();
+    </script>
+
+    <footer style="color: grey">COS30045 Data Visualisation<br></footer>
+</body>
+</html>
