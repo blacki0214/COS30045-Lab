@@ -1,5 +1,5 @@
 function init() {
-            var w = 500;
+        var w = 500;
         var h = 100;
         padding = 1;
 
